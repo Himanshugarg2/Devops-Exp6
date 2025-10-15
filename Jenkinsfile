@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_USER = 'himanshugarg2004'   
-        DOCKERHUB_CREDS = '64863c17-2fee-465f-b37c-4d95880a93de'
+        DOCKERHUB_CREDS = 'DockerCred'
         BUILD_TAG = "v${BUILD_NUMBER}"
     }
 
