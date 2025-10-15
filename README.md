@@ -48,6 +48,6 @@ Each service has:
 
 ## 🧰 Tools Configuration
 
-### 🔹 Docker
+### 🔹  Docker
 Each microservice includes a `Dockerfile` defining its runtime image.  
 Both services are deployed using `docker-compose.yml`.
