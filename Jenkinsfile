@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo 'Checking out code...'
+                echo 'Checking out code from GitHub...'
                 checkout scm
             }
         }
@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    echo 'Building Docker images for both services...'
+                    echo 'Building Docker images for both microservices...'
                     bat "docker build -t %DOCKERHUB_USER%/user-service:%BUILD_TAG% ./services/user-service"
                     bat "docker build -t %DOCKERHUB_USER%/order-service:%BUILD_TAG% ./services/order-service"
                 }
@@ -34,7 +34,7 @@ pipeline {
                         echo %PASSWORD% | docker login -u %USERNAME% --password-stdin
                         """
 
-                        echo 'Pushing images to Docker Hub...'
+                        echo 'Pushing Docker images to Docker Hub...'
                         bat "docker push %DOCKERHUB_USER%/user-service:%BUILD_TAG%"
                         bat "docker push %DOCKERHUB_USER%/order-service:%BUILD_TAG%"
                     }
@@ -45,8 +45,10 @@ pipeline {
         stage('Deploy Services via Docker Compose') {
             steps {
                 script {
-                    echo ' Deploying microservices using docker-compose...'
+                    echo 'Deploying microservices using Docker Compose...'
+                    
                     bat "docker-compose down || exit 0"
+                   
                     bat "docker-compose up -d"
                 }
             }
@@ -56,7 +58,7 @@ pipeline {
             steps {
                 script {
                     echo ' Verifying microservices endpoints...'
-                    bat "timeout /t 5 >nul"
+                    bat "ping -n 6 127.0.0.1 >NUL"
                     bat "curl http://localhost:3001/health"
                     bat "curl http://localhost:3002/health"
                 }
@@ -66,10 +68,10 @@ pipeline {
 
     post {
         success {
-            echo " Pipeline completed successfully!"
+            echo " Pipeline completed successfully! Microservices deployed and verified."
         }
         failure {
-            echo " Pipeline failed — check console output for errors."
+            echo " Pipeline failed — check Jenkins console output for error details."
         }
     }
 }
